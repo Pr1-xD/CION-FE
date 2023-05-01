@@ -34,7 +34,7 @@ export * from "./prices";
 
 const { AddressZero } = ethers.constants;
 
-export function useAllOrdersStats(chainId) {
+export function useAllOrdersStats(chainId) {     // getServerUrl(ARBITRUM, "/getorderstats")
   const query = gql(`{
     orderStat(id: "total") {
       openSwap
@@ -57,12 +57,13 @@ export function useAllOrdersStats(chainId) {
       // eslint-disable-next-line no-console
       graphClient.query({ query }).then(setRes).catch(console.warn);
     }
+  
   }, [setRes, query, chainId]);
 
   return res ? res.data.orderStat : null;
 }
 
-export function useUserStat(chainId) {
+export function useUserStat(chainId) {           // getServerUrl(ARBITRUM, "/user_stats")
   const query = gql(`{
     userStat(id: "total") {
       id
@@ -127,7 +128,7 @@ export function useLiquidationsData(chainId, account) {
   return data;
 }
 
-export function useAllPositions(chainId, library) {
+export function useAllPositions(chainId, library) {       // getServerUrl(ARBITRUM, "/positions")
   const count = 1000;
   const query = gql(`{
     aggregatedTradeOpens(
@@ -195,7 +196,7 @@ export function useAllPositions(chainId, library) {
   return positions;
 }
 
-export function useAllOrders(chainId, library) {
+export function useAllOrders(chainId, library) {      // getServerUrl(ARBITRUM, "/getorders")
   const query = gql(`{
     orders(
       first: 1000,
