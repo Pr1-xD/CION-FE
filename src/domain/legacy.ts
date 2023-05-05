@@ -56,6 +56,9 @@ export function useAllOrdersStats(chainId) {     // getServerUrl(ARBITRUM, "/get
     if (graphClient) {
       // eslint-disable-next-line no-console
       graphClient.query({ query }).then(setRes).catch(console.warn);
+    if(!graphClient) {
+       setRes(getServerUrl(ARBITRUM,"/getorderstats"))
+    } 
     }
   
   }, [setRes, query, chainId]);
@@ -64,19 +67,12 @@ export function useAllOrdersStats(chainId) {     // getServerUrl(ARBITRUM, "/get
 }
 
 export function useUserStat(chainId) {           // getServerUrl(ARBITRUM, "/user_stats")
-  const query = gql(`{
-    userStat(id: "total") {
-      id
-      uniqueCount
-    }
-  }`);
-
   const [res, setRes] = useState<any>();
 
   useEffect(() => {
     // eslint-disable-next-line no-console
-    getGmxGraphClient(chainId)?.query({ query }).then(setRes).catch(console.warn);
-  }, [setRes, query, chainId]);
+    setRes(getServerUrl(ARBITRUM,"/user_stats"))
+  }, [setRes]);
 
   return res ? res.data.userStat : null;
 }
@@ -130,32 +126,12 @@ export function useLiquidationsData(chainId, account) {
 
 export function useAllPositions(chainId, library) {       // getServerUrl(ARBITRUM, "/positions")
   const count = 1000;
-  const query = gql(`{
-    aggregatedTradeOpens(
-      first: ${count}
-    ) {
-      account
-      initialPosition{
-        indexToken
-        collateralToken
-        isLong
-        sizeDelta
-      }
-      increaseList {
-        sizeDelta
-      }
-      decreaseList {
-        sizeDelta
-      }
-    }
-  }`);
-
   const [res, setRes] = useState<any>();
 
   useEffect(() => {
     // eslint-disable-next-line no-console
-    nissohGraphClient.query({ query }).then(setRes).catch(console.warn);
-  }, [setRes, query]);
+      setRes(getServerUrl(ARBITRUM, "/positions"))
+  }, [setRes]);
 
   const key = res ? `allPositions${count}__` : null;
 
@@ -197,26 +173,11 @@ export function useAllPositions(chainId, library) {       // getServerUrl(ARBITR
 }
 
 export function useAllOrders(chainId, library) {      // getServerUrl(ARBITRUM, "/getorders")
-  const query = gql(`{
-    orders(
-      first: 1000,
-      orderBy: createdTimestamp,
-      orderDirection: desc,
-      where: {status: "open"}
-    ) {
-      type
-      account
-      index
-      status
-      createdTimestamp
-    }
-  }`);
-
   const [res, setRes] = useState<any>();
 
   useEffect(() => {
-    getGmxGraphClient(chainId)?.query({ query }).then(setRes);
-  }, [setRes, query, chainId]);
+    setRes(getServerUrl(ARBITRUM, "/getorders"))
+  }, [setRes]);
 
   const key = res ? res.data.orders.map((order) => `${order.type}-${order.account}-${order.index}`) : null;
   const { data: orders = [] } = useSWR(key, () => {
